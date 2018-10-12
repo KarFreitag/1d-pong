@@ -21,14 +21,14 @@
 
 #include "helper.h"
 
-Pong::Pong(uint8_t player_1_pin, uint8_t player_2_pin, uint8_t lifes, uint16_t button_lock_time,
+Pong::Pong(uint8_t * player_pins, uint8_t lifes, uint16_t button_lock_time,
       uint8_t num_leds, double stripe_length, uint8_t brightness,
       uint8_t restart_pin, uint16_t restart_lock_time, uint8_t random_seed_pin)
       : screen(num_leds, brightness),
         restart(restart_pin, restart_lock_time),
         ball(0, 0, num_leds-1, 0.2, 1)
 {
-  players = createPlayers( 2, lifes, num_leds, button_lock_time);
+  players = createPlayers( 2, player_pins, lifes, num_leds, button_lock_time);
 	
   state = WAITING;
   auto_serve_timeout = 2000;

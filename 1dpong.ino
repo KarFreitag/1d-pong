@@ -40,9 +40,6 @@ enum class GameState { InitPinRecorder, RecordPins, InitPong, PlayPong};
 
 GameState state = GameState::InitPinRecorder;
 
-bool buttonPinsRecorded = false;
-bool buttonPinsPropagated = false;
-
 Pong * pong;
 ButtonPinRecorder * bPinRecorder;
 

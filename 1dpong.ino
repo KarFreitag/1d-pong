@@ -70,7 +70,7 @@ void loop() {
         bPinRecorder->getRecordedButtonPins( buttonPins);
         delete bPinRecorder;
 
-        pong = new Pong( buttonPins, LIFES, BUTTON_LOCK_TIME, NUM_LEDS, STRIPE_LENGTH, BRIGHTNESS, buttonPins[ 2], RESTART_LOCK_TIME, RANDOM_SEED_PIN);
+        pong = new Pong( buttonPins, 2, LIFES, BUTTON_LOCK_TIME, NUM_LEDS, STRIPE_LENGTH, BRIGHTNESS, buttonPins[ 2], RESTART_LOCK_TIME, RANDOM_SEED_PIN);
 
         state = GameState::PlayPong;
         break;

@@ -49,6 +49,7 @@ class Player {
     void reset_lifes();
     uint8_t get_off_position();
     uint8_t get_autoserve_position();
+    bool is_position_within_hitbox( uint8_t position);
 };
 
 #endif

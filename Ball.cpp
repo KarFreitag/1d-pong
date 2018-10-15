@@ -19,6 +19,17 @@
 // Ball.cpp
 #include "Ball.h"
 
+Ball::Ball(int8_t position, uint8_t min_position, uint8_t max_position, double speed, int8_t direction) {
+//  init(0,0.2,1);
+  this->position = position;
+  this->min_position = min_position;
+  this->max_position = max_position;
+  this->speed = speed;
+  this->initial_speed = speed;
+  this->direction = direction;
+  speedup = 0.0;
+}
+
 uint8_t Ball::distance_to_field_boundary (Player &player) {
   if ( position > 29 ) {
     return position - player.hitbox_min;
@@ -40,17 +51,6 @@ void Ball::reverse_direction() {
 
 void Ball::increase_speed() {
   speed *= 1.05;
-}
-
-Ball::Ball(int8_t position, uint8_t min_position, uint8_t max_position, double speed, int8_t direction) {
-//  init(0,0.2,1);
-  this->position = position;
-  this->min_position = min_position;
-  this->max_position = max_position;
-  this->speed = speed;
-  this->initial_speed = speed;
-  this->direction = direction;
-  speedup = 0.0;
 }
 
 bool Ball::is_inside_hitbox(Player &player) {
@@ -89,17 +89,18 @@ int8_t Ball::get_direction() {
 }
 
 void Ball::hit() {
-  reverse_direction();
+  //reverse_direction();
   increase_speed();
 }
 
 void Ball::calc_speedup(Player &player) {
-  speedup = distance_to_field_boundary(player)/10.0;
+  //speedup = distance_to_field_boundary(player)/10.0;
+  speedup = 0.1;
 }
 
 void Ball::advance() {
   previous_position = position;
-  position += direction;
+  position = (position + direction + max_position + 1) % (max_position + 1);
 }
 
 void Ball::serve(Player player) {

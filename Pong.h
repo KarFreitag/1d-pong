@@ -33,7 +33,7 @@
 
 class Pong {
   public:
-    Pong(uint8_t * player_pins, uint8_t lifes, uint16_t button_lock_time,
+    Pong(uint8_t * player_pins, uint8_t num_players, uint8_t lifes, uint16_t button_lock_time,
          uint8_t num_leds, double stripe_length, uint8_t brightness,
          uint8_t restart_pin, uint16_t restart_lock_time, uint8_t random_seed_pin);
 
@@ -50,9 +50,7 @@ class Pong {
 
     Button restart;
     Player* players;
-    //Player* players[2];
-    //Player player_1;
-    //Player player_2;
+    uint8_t num_players;
     Screen screen;
     Ball ball;
 
@@ -67,6 +65,7 @@ class Pong {
     bool autoserve_step_timer();
     bool ball_is_in_allowed_position();
     void choose_random_player();
+    void choose_next_player();
 };
 
 #endif

@@ -17,3 +17,8 @@ Player * createPlayers( uint8_t numPlayers, uint8_t * player_pins, uint8_t lifes
   return newPlayers;
 }
 
+int8_t sgn(int8_t val) {
+ if (val < 0) return -1;
+ if (val==0) return 0;
+ return 1;
+}

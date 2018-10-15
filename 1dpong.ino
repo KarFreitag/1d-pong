@@ -24,7 +24,7 @@
 const uint8_t LIFES = 8;
 const uint16_t BUTTON_LOCK_TIME = 1000;
 const uint16_t RESTART_LOCK_TIME = 1000;
-const uint16_t BUTTON_PIN_RECORDING_DURATION = 5000;
+const uint16_t BUTTON_PIN_RECORDING_DURATION = 10000;
 
 // FastLED settings
 const uint8_t NUM_LEDS = 100;
@@ -51,7 +51,7 @@ void setup() {
 void loop() {
   switch (state) {
     case GameState::InitPinRecorder: {
-        bPinRecorder = new ButtonPinRecorder( BUTTON_PIN_RECORDING_DURATION, 3, 3);
+        bPinRecorder = new ButtonPinRecorder( BUTTON_PIN_RECORDING_DURATION);
         state = GameState::RecordPins;
         break;
       }
@@ -70,7 +70,9 @@ void loop() {
         bPinRecorder->getRecordedButtonPins( buttonPins);
         delete bPinRecorder;
 
-        pong = new Pong( buttonPins, 2, LIFES, BUTTON_LOCK_TIME, NUM_LEDS, STRIPE_LENGTH, BRIGHTNESS, buttonPins[ 2], RESTART_LOCK_TIME, RANDOM_SEED_PIN);
+        uint8_t numPlayers = numButtonPins -1;
+        uint8_t resetButtonPin = buttonPins[ numButtonPins -1];
+        pong = new Pong( buttonPins, numPlayers, LIFES, BUTTON_LOCK_TIME, NUM_LEDS, STRIPE_LENGTH, BRIGHTNESS, resetButtonPin, RESTART_LOCK_TIME, RANDOM_SEED_PIN);
 
         state = GameState::PlayPong;
         break;

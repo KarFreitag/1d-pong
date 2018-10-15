@@ -47,13 +47,14 @@ void Pong::game_logic() {
 
   switch (state) {
     case WAITING:
-      screen.show_score( players[0], players[1]);
+      screen.show_score( players, num_players);
       if (restart.is_pressed()) {
         choose_random_player();
 
-        players[0].reset_lifes();
-        players[1].reset_lifes();
-        screen.reset( players[0], players[1]);
+        for (int i=0; i<num_players; ++i) {
+          players[i].reset_lifes();  
+        }
+        screen.reset( players, num_players);
 
         state = SERVE;
       }
@@ -64,7 +65,7 @@ void Pong::game_logic() {
     case IDLE:
       screen.show_color_palette();
       if (restart.is_pressed()) {
-        screen.reset( players[0], players[1]);
+        screen.reset( players, num_players);
         waiting_time = millis();
         state = WAITING;
       }
@@ -72,18 +73,18 @@ void Pong::game_logic() {
     case PLAYING:
       if (ball.timer()) {
         ball.advance();
-        screen.draw( players[0], players[1], ball);
+        screen.draw( players, num_players, ball);
       }
 
       if ( players[ active_player].is_position_within_hitbox( ball.get_previous_position())
            && !players[ active_player].is_position_within_hitbox( ball.get_position())) {
         if ( players[ active_player].lose_life() == 0 ) {
-          screen.reset( players[0], players[1]);
+          screen.reset( players, num_players);
           waiting_time = millis();
           state = WAITING;
           break;
         }
-        screen.show_score( players[0], players[1]);
+        screen.show_score( players, num_players);
         prepare_next_serve();
         break;
       }
@@ -98,8 +99,6 @@ void Pong::game_logic() {
     case SERVE:
       // as long as auto_serve_timeout isn't reached, advance ball and calculate speedup for current position
       if ( autoserve_timer() ) {
-        //Serial.println( String( autoserve_timer()) + " " + String( ball_is_in_allowed_position()) + " " + String( autoserve_step_timer()));
-        //if ( ball_is_in_allowed_position() && autoserve_step_timer()) {
         if ( autoserve_step_timer()) {
           position_is_allowed = true;
           ball.advance();

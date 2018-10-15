@@ -65,14 +65,15 @@ Screen::Screen(uint8_t num_leds, uint8_t brightness) : leds(new CRGB[num_leds]) 
   init();
 }
 
-void Screen::show_score(Player &p1, Player &p2) {
-  draw_player_score(p1);
-  draw_player_score(p2);
+void Screen::show_score( Player * players, uint8_t num_players) {
+  for (int i=0; i<num_players; ++i) {
+    draw_player_score( players[ i]);
+  }
 
   FastLED.show();
 }
 
-void Screen::advance_ball(Ball &b, Player &p1, Player &p2) {
+void Screen::advance_ball(Ball &b) {
   leds[b.get_position()] = CRGB::Black;
 
   b.set_position(b.get_position() + b.get_direction());
@@ -95,19 +96,22 @@ void Screen::clear(Ball &ball) {
   clear_led(ball.get_position());
 }
 
-void Screen::reset(Player &p1, Player &p2) {
+void Screen::reset( Player * players, uint8_t num_players) {
   clear_all_leds();
-  show_score(p1, p2);
+  show_score( players, num_players);
 }
 
 void Screen::draw_ball(uint8_t num) {
   leds[num] = CRGB::White;
 }
 
-void Screen::draw(Player &player_1, Player &player_2, Ball &ball) {
+void Screen::draw(Player * players, uint8_t num_players, Ball &ball) {
   clear_led(ball.get_previous_position());
-  draw_player_score(player_1);
-  draw_player_score(player_2);
+  
+  for (int i=0; i<num_players; ++i) {
+    draw_player_score( players[ i]);  
+  }
+  
   draw_ball(ball.get_position());
   FastLED.show();
 }

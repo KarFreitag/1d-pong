@@ -1,10 +1,16 @@
 
 #include "ButtonPinRecorder.h"
 
-ButtonPinRecorder::ButtonPinRecorder( uint16_t recordingDuration, uint8_t numRecordedButtonPinsMin, uint8_t numRecordedButtonPinsMax) 
-: recordingDuration( recordingDuration),
-  numRecordedButtonPinsMin( numRecordedButtonPinsMin), 
-  numRecordedButtonPinsMax( numRecordedButtonPinsMax){}
+ButtonPinRecorder::ButtonPinRecorder( uint16_t recordingDuration)
+  : recordingDuration( recordingDuration),
+    numRecordedButtonPinsMin( 3),
+    numRecordedButtonPinsMax( 6) {}
+
+
+ButtonPinRecorder::ButtonPinRecorder( uint16_t recordingDuration, uint8_t numRecordedButtonPinsMin, uint8_t numRecordedButtonPinsMax)
+  : recordingDuration( recordingDuration),
+    numRecordedButtonPinsMin( numRecordedButtonPinsMin),
+    numRecordedButtonPinsMax( numRecordedButtonPinsMax) {}
 
 bool ButtonPinRecorder::loop() {
   if (recordingStartTime == 0) {
@@ -19,10 +25,10 @@ bool ButtonPinRecorder::loop() {
   }
 
   numRecordedButtonPins = min( numRecordedButtonPins, numRecordedButtonPinsMax);
-  bool timesUp = (millis() - recordingStartTime) > recordingDuration; 
+  bool timesUp = (millis() - recordingStartTime) > recordingDuration;
   bool minPinsReached = numRecordedButtonPins >= numRecordedButtonPinsMin;
   bool maxPinsReached = numRecordedButtonPins >= numRecordedButtonPinsMax;
-  
+
   bool isDone = maxPinsReached || (minPinsReached && timesUp);
   return isDone;
 }
@@ -32,8 +38,8 @@ uint8_t ButtonPinRecorder::getNumRecordedButtonPins() {
 }
 
 void ButtonPinRecorder::getRecordedButtonPins( uint8_t * recordedButtonPins) {
-  for (int i=0; i<numRecordedButtonPins; ++i) {
-    recordedButtonPins[i] = this->recordedButtonPins[i];  
+  for (int i = 0; i < numRecordedButtonPins; ++i) {
+    recordedButtonPins[i] = this->recordedButtonPins[i];
   }
 }
 

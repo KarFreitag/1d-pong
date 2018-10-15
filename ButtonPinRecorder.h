@@ -11,6 +11,7 @@
 class ButtonPinRecorder {
   public:
     ButtonPinRecorder();
+    ButtonPinRecorder( uint16_t recordingDuration);
     ButtonPinRecorder( uint16_t recordingDuration, uint8_t numRecordedButtonPinsMin, uint8_t numRecordedButtonPinsMax);
     bool loop();
     uint8_t getNumRecordedButtonPins();

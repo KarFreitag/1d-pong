@@ -36,11 +36,11 @@ class Screen {
   public:
     Screen(uint8_t num_leds, uint8_t brightness);
 
-    void show_score(Player &p1, Player &p2);
-    void advance_ball(Ball &b, Player &p1, Player &p2);
-    void draw(Player &player_1, Player &player_2, Ball &ball);
+    void show_score( Player * players, uint8_t num_players);
+    void advance_ball( Ball &b);
+    void draw(Player * players, uint8_t num_players, Ball &ball);
     void clear(Ball &ball);
-    void reset(Player &p1, Player &p2);
+    void reset( Player * players, uint8_t num_players);
 
     void show_color_palette();
     void FillLEDsFromPaletteColors(uint8_t colorIndex);

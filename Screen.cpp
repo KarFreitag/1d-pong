@@ -38,19 +38,14 @@ void Screen::init() {
 }
 
 void Screen::draw_player_score(Player p) {
-  for (uint8_t i = p.hitbox_min; i <= p.hitbox_max; i++) {
-    if ( i < (num_leds / 2 - 1) ) {
-      if ( i < ( p.initial_lifes - p.lifes )) {
-        leds[i] = p.lost_lifes_color;
-      } else {
-        leds[i] = p.lifes_color;
-      }
+  float hitbox_center = (float)(p.hitbox_max - p.hitbox_min) / 2.0f;
+  uint8_t num_lost_life_leds = (float)(p.hitbox_max - p.hitbox_min) * (1.0f - (float)p.lifes / (float)p.initial_lifes);
+
+  for (uint8_t i = p.hitbox_min; i <= p.hitbox_max; ++i) {
+    if ( abs( hitbox_center - i) < num_lost_life_leds) {
+      leds[i] = p.lost_lifes_color;
     } else {
-      if ( i < ( num_leds - p.initial_lifes + p.lifes )) {
-        leds[i] = p.lifes_color;
-      } else {
-        leds[i] = p.lost_lifes_color;
-      }
+      leds[i] = p.lifes_color;
     }
   }
 }
@@ -66,7 +61,7 @@ Screen::Screen(uint8_t num_leds, uint8_t brightness) : leds(new CRGB[num_leds]) 
 }
 
 void Screen::show_score( Player * players, uint8_t num_players) {
-  for (int i=0; i<num_players; ++i) {
+  for (int i = 0; i < num_players; ++i) {
     draw_player_score( players[ i]);
   }
 
@@ -107,11 +102,11 @@ void Screen::draw_ball(uint8_t num) {
 
 void Screen::draw(Player * players, uint8_t num_players, Ball &ball) {
   clear_led(ball.get_previous_position());
-  
-  for (int i=0; i<num_players; ++i) {
-    draw_player_score( players[ i]);  
+
+  for (int i = 0; i < num_players; ++i) {
+    draw_player_score( players[ i]);
   }
-  
+
   draw_ball(ball.get_position());
   FastLED.show();
 }

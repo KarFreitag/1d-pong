@@ -156,8 +156,11 @@ void Pong::choose_random_player() {
 
   int8_t ball_direction = random(0, 1) ? 1 : -1;
   ball.set_direction( ball_direction);
+
+  choose_next_player();
 }
 
 void Pong::choose_next_player() {
-  active_player = (active_player + 1) % num_players;
+  int8_t next_player_direction = sgn( ball.get_direction());
+  active_player = ((active_player + next_player_direction) + num_players) % num_players;
 }

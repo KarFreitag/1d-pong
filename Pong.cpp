@@ -36,7 +36,8 @@ Pong::Pong(uint8_t * player_pins, uint8_t num_players, uint8_t lifes, uint16_t b
   auto_serve_timeout = 2000;
   position_is_allowed = false;
   waiting_time = millis();
-  randomSeed(analogRead(random_seed_pin));
+  //randomSeed( analogRead( random_seed_pin));
+  randomSeed( millis());
 }
 
 void Pong::game_logic() {
@@ -80,10 +81,10 @@ void Pong::game_logic() {
 
       if ( players[ active_player].is_position_within_hitbox( ball.get_previous_position())
            && !players[ active_player].is_position_within_hitbox( ball.get_position())) {
-            
+
         if ( players[ active_player].lose_life() == 0 ) {
           --num_players_alive;
-          
+
           if (num_players_alive <= 1) {
             screen.reset( players, num_players);
             waiting_time = millis();
@@ -157,11 +158,11 @@ bool Pong::ball_is_in_allowed_position() {
 
 void Pong::choose_random_player() {
   // randomly select active player to serve the first ball
-  active_player = random(0, 2);
-  int8_t ball_position = (players[ active_player].hitbox_max - players[ active_player].hitbox_min) / 2;
+  active_player = random( num_players);
+  int8_t ball_position = (players[ active_player].hitbox_max + players[ active_player].hitbox_min) / 2;
   ball.set_position( ball_position);
 
-  int8_t ball_direction = random(0, 1) ? 1 : -1;
+  int8_t ball_direction = random( 2) ? 1 : -1;
   ball.set_direction( ball_direction);
 
   choose_next_player();

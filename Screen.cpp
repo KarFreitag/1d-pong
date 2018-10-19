@@ -38,11 +38,11 @@ void Screen::init() {
 }
 
 void Screen::draw_player_score(Player p) {
-  float hitbox_center = (float)(p.hitbox_max - p.hitbox_min) / 2.0f;
-  uint8_t num_lost_life_leds = (float)(p.hitbox_max - p.hitbox_min) * (1.0f - (float)p.lifes / (float)p.initial_lifes);
+  float hitbox_center = (float)(p.hitbox_max + p.hitbox_min) / 2.0f;
+  uint8_t num_lost_life_leds_half = 0.5f * (float)(p.initial_lifes) * (1.0f - (float)p.lifes / (float)p.initial_lifes);
 
   for (uint8_t i = p.hitbox_min; i <= p.hitbox_max; ++i) {
-    if ( abs( hitbox_center - i) < num_lost_life_leds) {
+    if ( abs( hitbox_center - i) < num_lost_life_leds_half) {
       leds[i] = p.lost_lifes_color;
     } else {
       leds[i] = p.lifes_color;

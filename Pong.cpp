@@ -25,6 +25,7 @@ Pong::Pong(uint8_t * player_pins, uint8_t num_players, uint8_t lifes, uint16_t b
            uint8_t num_leds, double stripe_length, uint8_t brightness,
            uint8_t restart_pin, uint16_t restart_lock_time, uint8_t random_seed_pin)
   : num_players( num_players),
+    num_players_alive( num_players),
     screen(num_leds, brightness),
     restart(restart_pin, restart_lock_time),
     ball(0, 0, num_leds - 1, 0.2, 1)
@@ -51,10 +52,11 @@ void Pong::game_logic() {
       if (restart.is_pressed()) {
         choose_random_player();
 
-        for (int i=0; i<num_players; ++i) {
-          players[i].reset_lifes();  
+        for (int i = 0; i < num_players; ++i) {
+          players[i].reset_lifes();
         }
         screen.reset( players, num_players);
+        num_players_alive = num_players;
 
         state = SERVE;
       }
@@ -78,11 +80,16 @@ void Pong::game_logic() {
 
       if ( players[ active_player].is_position_within_hitbox( ball.get_previous_position())
            && !players[ active_player].is_position_within_hitbox( ball.get_position())) {
+            
         if ( players[ active_player].lose_life() == 0 ) {
-          screen.reset( players, num_players);
-          waiting_time = millis();
-          state = WAITING;
-          break;
+          --num_players_alive;
+          
+          if (num_players_alive <= 1) {
+            screen.reset( players, num_players);
+            waiting_time = millis();
+            state = WAITING;
+            break;
+          }
         }
         screen.show_score( players, num_players);
         prepare_next_serve();
@@ -140,7 +147,7 @@ bool Pong::autoserve_step_timer() {
 }
 
 bool Pong::ball_is_in_allowed_position() {
-  for (int i=0; i<num_players; ++i) {
+  for (int i = 0; i < num_players; ++i) {
     if ( players[i].is_position_within_hitbox( ball.get_position())) {
       return true;
     }
@@ -163,4 +170,8 @@ void Pong::choose_random_player() {
 void Pong::choose_next_player() {
   int8_t next_player_direction = sgn( ball.get_direction());
   active_player = ((active_player + next_player_direction) + num_players) % num_players;
+
+  if ( players[ active_player].lifes <= 0) {
+    choose_next_player();
+  }
 }

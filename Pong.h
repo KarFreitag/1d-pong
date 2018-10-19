@@ -51,6 +51,7 @@ class Pong {
     Button restart;
     Player* players;
     uint8_t num_players;
+    uint8_t num_players_alive;
     Screen screen;
     Ball ball;
 

@@ -60,7 +60,6 @@ class Pong {
     unsigned long waiting_time;
     uint16_t auto_serve_timeout;
     uint8_t active_player;
-    bool position_is_allowed;
     void prepare_next_serve();
     bool autoserve_timer();
     bool autoserve_step_timer();

@@ -34,7 +34,6 @@ Pong::Pong(uint8_t * player_pins, uint8_t num_players, uint8_t lifes, uint16_t b
 
   state = WAITING;
   auto_serve_timeout = 2000;
-  position_is_allowed = false;
   waiting_time = millis();
   //randomSeed( analogRead( random_seed_pin));
   randomSeed( millis());
@@ -106,25 +105,15 @@ void Pong::game_logic() {
       break;
     case SERVE:
       // as long as auto_serve_timeout isn't reached, advance ball and calculate speedup for current position
-      if ( autoserve_timer() ) {
-        if ( autoserve_step_timer()) {
-          position_is_allowed = true;
-          ball.advance();
-          ball.calc_speedup( players[active_player]);
-          autoserve_step_time = millis();
-        }
-      } else {
+      if ( !autoserve_timer() ) {
         ball.reset_speedup();
         choose_next_player();
-        // reset flag
-        position_is_allowed = false;
         state = PLAYING;
       }
       // Wait at least one loop for ball to come back in the court ()
-      if (players[active_player].button.is_pressed() && position_is_allowed) {
+      if ( players[active_player].button.is_pressed()) {
         // reset flag
         choose_next_player();
-        position_is_allowed = false;
         state = PLAYING;
       }
       break;
@@ -164,8 +153,6 @@ void Pong::choose_random_player() {
 
   int8_t ball_direction = random( 2) ? 1 : -1;
   ball.set_direction( ball_direction);
-
-  choose_next_player();
 }
 
 void Pong::choose_next_player() {

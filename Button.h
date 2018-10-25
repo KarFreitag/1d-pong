@@ -34,6 +34,7 @@ class Button {
     void set_pin(uint8_t pin);
     void set_lock_time(double time);
     bool is_pressed();
+    uint8_t pin;
 
   private:
     enum ButtonState {
@@ -43,7 +44,6 @@ class Button {
 
     ButtonState current_state;
 
-    uint8_t pin;
     bool locked;
     unsigned long time;
     unsigned long lock_time;

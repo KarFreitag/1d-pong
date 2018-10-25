@@ -22,25 +22,24 @@
 #include "helper.h"
 
 Pong::Pong(uint8_t * player_pins, uint8_t num_players, uint8_t lifes, uint16_t button_lock_time,
-           uint8_t num_leds, double stripe_length, uint8_t brightness,
-           uint8_t restart_pin, uint16_t restart_lock_time, uint8_t random_seed_pin)
+           uint8_t num_leds, double stripe_length, uint8_t brightness)
   : num_players( num_players),
     num_players_alive( num_players),
     screen(num_leds, brightness),
-    restart(restart_pin, restart_lock_time),
-    ball(0, 0, num_leds - 1, 0.2, 1)
+    ball(0, 0, num_leds - 1, 0.2, 1),
+    restart_lock_time( button_lock_time)
 {
   players = createPlayers( num_players, player_pins, lifes, num_leds, button_lock_time);
 
   state = WAITING;
   auto_serve_timeout = 2000;
   waiting_time = millis();
-  //randomSeed( analogRead( random_seed_pin));
   randomSeed( millis());
 }
 
 void Pong::game_logic() {
-  if (restart.is_pressed()) {
+  if (should_restart_pong()) {
+    //screen.reset( players, num_players);
     screen.clear(ball);
     waiting_time = millis();
     state = WAITING;
@@ -49,7 +48,7 @@ void Pong::game_logic() {
   switch (state) {
     case WAITING:
       screen.show_score( players, num_players);
-      if (restart.is_pressed()) {
+      if (should_restart_pong()) {
         choose_random_player();
 
         for (int i = 0; i < num_players; ++i) {
@@ -64,14 +63,11 @@ void Pong::game_logic() {
         state = IDLE;
       }
       break;
+      
     case IDLE:
       screen.show_color_palette();
-      if (restart.is_pressed()) {
-        screen.reset( players, num_players);
-        waiting_time = millis();
-        state = WAITING;
-      }
       break;
+      
     case PLAYING:
       if (ball.timer()) {
         ball.advance();
@@ -101,18 +97,18 @@ void Pong::game_logic() {
         ball.calc_speedup( players[ active_player]);
         choose_next_player();
       }
-
       break;
+      
     case SERVE:
-      // as long as auto_serve_timeout isn't reached, advance ball and calculate speedup for current position
       if ( !autoserve_timer() ) {
+        // auto-serve
         ball.reset_speedup();
         choose_next_player();
         state = PLAYING;
       }
-      // Wait at least one loop for ball to come back in the court ()
+
       if ( players[active_player].button.is_pressed()) {
-        // reset flag
+        // perform serve
         choose_next_player();
         state = PLAYING;
       }
@@ -124,16 +120,11 @@ void Pong::prepare_next_serve() {
   ball.reverse_direction();
   ball.reset_speedup();
   autoserve_time = millis();
-  autoserve_step_time = millis();
   state = SERVE;
 }
 
 bool Pong::autoserve_timer() {
   return (millis() - autoserve_time <= auto_serve_timeout);
-}
-
-bool Pong::autoserve_step_timer() {
-  return (millis() - autoserve_step_time >= (2000 / 8));
 }
 
 bool Pong::ball_is_in_allowed_position() {
@@ -163,3 +154,20 @@ void Pong::choose_next_player() {
     choose_next_player();
   }
 }
+
+bool Pong::should_restart_pong() {
+  for (int i = 0; i < num_players; ++i) {
+    if ( !(digitalRead( players[ i].button.pin) == HIGH)) {
+      restart_lock_timestamp = millis();
+      return false;
+    }
+  }
+
+  if ( millis() - restart_lock_timestamp > restart_lock_time) {
+    restart_lock_timestamp = millis();
+    return true;
+  } else {
+    return false;  
+  }
+}
+

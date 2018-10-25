@@ -34,8 +34,7 @@
 class Pong {
   public:
     Pong(uint8_t * player_pins, uint8_t num_players, uint8_t lifes, uint16_t button_lock_time,
-         uint8_t num_leds, double stripe_length, uint8_t brightness,
-         uint8_t restart_pin, uint16_t restart_lock_time, uint8_t random_seed_pin);
+         uint8_t num_leds, double stripe_length, uint8_t brightness);
 
     void game_logic();
 
@@ -47,25 +46,25 @@ class Pong {
       SERVE,
       WAITING
     } state;
-
-    Button restart;
+    
     Player* players;
     uint8_t num_players;
     uint8_t num_players_alive;
     Screen screen;
     Ball ball;
+    unsigned long restart_lock_timestamp;
+    unsigned long restart_lock_time;
 
     unsigned long autoserve_time;
-    unsigned long autoserve_step_time;
     unsigned long waiting_time;
     uint16_t auto_serve_timeout;
     uint8_t active_player;
     void prepare_next_serve();
     bool autoserve_timer();
-    bool autoserve_step_timer();
     bool ball_is_in_allowed_position();
     void choose_random_player();
     void choose_next_player();
+    bool should_restart_pong();
 };
 
 #endif

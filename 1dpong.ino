@@ -23,7 +23,6 @@
 // Player settings
 const uint8_t LIFES = 8;
 const uint16_t BUTTON_LOCK_TIME = 1000;
-const uint16_t RESTART_LOCK_TIME = 1000;
 const uint16_t BUTTON_PIN_RECORDING_DURATION = 10000;
 
 // FastLED settings
@@ -32,9 +31,6 @@ const double STRIPE_LENGTH = 1.66;
 //const EOrder LED_COLOR_ORDER = BGR;
 //const ESPIChipsets LED_TYPE = APA102;
 const uint8_t BRIGHTNESS = 64; //max. 255
-
-// Random settings
-const uint8_t RANDOM_SEED_PIN = 5;
 
 enum class GameState { InitPinRecorder, RecordPins, InitPong, PlayPong};
 
@@ -69,10 +65,8 @@ void loop() {
         uint8_t * buttonPins = new uint8_t[ numButtonPins];
         bPinRecorder->getRecordedButtonPins( buttonPins);
         delete bPinRecorder;
-
-        uint8_t numPlayers = numButtonPins -1;
-        uint8_t resetButtonPin = buttonPins[ numButtonPins -1];
-        pong = new Pong( buttonPins, numPlayers, LIFES, BUTTON_LOCK_TIME, NUM_LEDS, STRIPE_LENGTH, BRIGHTNESS, resetButtonPin, RESTART_LOCK_TIME, RANDOM_SEED_PIN);
+        
+        pong = new Pong( buttonPins, numButtonPins, LIFES, BUTTON_LOCK_TIME, NUM_LEDS, STRIPE_LENGTH, BRIGHTNESS);
 
         state = GameState::PlayPong;
         break;

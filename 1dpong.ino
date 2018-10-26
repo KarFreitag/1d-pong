@@ -23,7 +23,7 @@
 // Player settings
 const uint8_t LIFES = 8;
 const uint16_t BUTTON_LOCK_TIME = 1000;
-const uint16_t BUTTON_PIN_RECORDING_DURATION = 10000;
+const uint16_t BUTTON_PIN_RECORDING_DURATION = 3000;
 
 // FastLED settings
 const uint8_t NUM_LEDS = 100;

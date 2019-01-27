@@ -40,6 +40,8 @@ Pong * pong;
 ButtonPinRecorder * bPinRecorder;
 
 void setup() {
+  delay( 3000 ); // power-up safety delay
+
   Serial.begin( 9600 );
   Serial.println("Starting Pong!");
 }
@@ -65,7 +67,7 @@ void loop() {
         uint8_t * buttonPins = new uint8_t[ numButtonPins];
         bPinRecorder->getRecordedButtonPins( buttonPins);
         delete bPinRecorder;
-        
+
         pong = new Pong( buttonPins, numButtonPins, LIFES, BUTTON_LOCK_TIME, NUM_LEDS, STRIPE_LENGTH, BRIGHTNESS);
 
         state = GameState::PlayPong;

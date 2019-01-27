@@ -10,7 +10,9 @@ ButtonPinRecorder::ButtonPinRecorder( uint16_t recordingDuration)
 ButtonPinRecorder::ButtonPinRecorder( uint16_t recordingDuration, uint8_t numRecordedButtonPinsMin, uint8_t numRecordedButtonPinsMax)
   : recordingDuration( recordingDuration),
     numRecordedButtonPinsMin( numRecordedButtonPinsMin),
-    numRecordedButtonPinsMax( numRecordedButtonPinsMax) {}
+    numRecordedButtonPinsMax( numRecordedButtonPinsMax) {
+
+}
 
 bool ButtonPinRecorder::loop() {
   uint8_t numRecordablePins = sizeof( recordableButtonPins);

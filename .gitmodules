@@ -1,0 +1,3 @@
+[submodule "libraries/FastLEDStripeAnimator"]
+	path = libraries/FastLEDStripeAnimator
+	url = https://github.com/KarFreitag/FastLEDStripeAnimator.git

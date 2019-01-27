@@ -19,18 +19,8 @@
 // 1dpong.ino
 #include "Pong.h"
 #include "ButtonPinRecorder.h"
-
-// Player settings
-const uint8_t LIFES = 8;
-const uint16_t BUTTON_LOCK_TIME = 1000;
-const uint16_t BUTTON_PIN_RECORDING_DURATION = 3000;
-
-// FastLED settings
-const uint8_t NUM_LEDS = 100;
-const double STRIPE_LENGTH = 1.66;
-//const EOrder LED_COLOR_ORDER = BGR;
-//const ESPIChipsets LED_TYPE = APA102;
-const uint8_t BRIGHTNESS = 64; //max. 255
+#include "Constants.h"
+#include "ColorStripeAnimatorPulse.h"
 
 enum class GameState { InitPinRecorder, RecordPins, InitPong, PlayPong};
 
@@ -38,9 +28,12 @@ GameState state = GameState::InitPinRecorder;
 
 Pong * pong;
 ButtonPinRecorder * bPinRecorder;
+ColorStripeAnimatorPulse * pulseStripeAnimator;
 
 void setup() {
   delay( 3000 ); // power-up safety delay
+
+  pulseStripeAnimator = new ColorStripeAnimatorPulse( Const::NUM_LEDS);
 
   Serial.begin( 9600 );
   Serial.println("Starting Pong!");
@@ -49,7 +42,7 @@ void setup() {
 void loop() {
   switch (state) {
     case GameState::InitPinRecorder: {
-        bPinRecorder = new ButtonPinRecorder( BUTTON_PIN_RECORDING_DURATION);
+        bPinRecorder = new ButtonPinRecorder( Const::BUTTON_PIN_RECORDING_DURATION);
         state = GameState::RecordPins;
         break;
       }
@@ -68,7 +61,7 @@ void loop() {
         bPinRecorder->getRecordedButtonPins( buttonPins);
         delete bPinRecorder;
 
-        pong = new Pong( buttonPins, numButtonPins, LIFES, BUTTON_LOCK_TIME, NUM_LEDS, STRIPE_LENGTH, BRIGHTNESS);
+        pong = new Pong( buttonPins, numButtonPins, Const::LIFES, Const::BUTTON_LOCK_TIME, Const::NUM_LEDS, Const::STRIPE_LENGTH, Const::BRIGHTNESS);
 
         state = GameState::PlayPong;
         break;

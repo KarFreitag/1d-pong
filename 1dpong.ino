@@ -16,6 +16,8 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <FastLED.h>
+
 // 1dpong.ino
 #include "Pong.h"
 #include "ButtonPinRecorder.h"
@@ -29,11 +31,24 @@ GameState state = GameState::InitPinRecorder;
 Pong * pong;
 ButtonPinRecorder * bPinRecorder;
 ColorStripeAnimatorPulse * pulseStripeAnimator;
+CRGB * leds = new CRGB[ Const::NUM_LEDS];
 
 void setup() {
-  delay( 3000 ); // power-up safety delay
+  delay( Const::POWERUP_SAFETY_DURATION); // power-up safety delay
 
-  pulseStripeAnimator = new ColorStripeAnimatorPulse( Const::NUM_LEDS);
+  // set chipset type, color order of LEDs and number of LEDs on stripe
+  //FastLED.addLeds<led_type, led_color_order>(leds, num_leds);
+  FastLED.addLeds<APA102, BGR>(leds, Const::NUM_LEDS).setCorrection( TypicalLEDStrip );
+  
+  // set global brightness
+  FastLED.setBrightness( Const::BRIGHTNESS );
+
+  // turn off all LEDs
+  for (uint8_t i = 0; i < Const::NUM_LEDS; i++) {
+    leds[i] = CRGB::Black;
+  }
+
+  FastLED.show();
 
   Serial.begin( 9600 );
   Serial.println("Starting Pong!");
@@ -42,26 +57,41 @@ void setup() {
 void loop() {
   switch (state) {
     case GameState::InitPinRecorder: {
+      Serial.println("Initializing pin recorder!");
         bPinRecorder = new ButtonPinRecorder( Const::BUTTON_PIN_RECORDING_DURATION);
+        pulseStripeAnimator = new ColorStripeAnimatorPulse( Const::NUM_LEDS);
+        pulseStripeAnimator->setPulseColor( Const::playerColors[ 0]);
+        pulseStripeAnimator->setPulseDuration( Const::BUTTON_PIN_RECORDING_PULSE_DURATION);
         state = GameState::RecordPins;
         break;
       }
 
     case GameState::RecordPins: {
-        bool buttonPinsRecorded = bPinRecorder->loop();
-        if (buttonPinsRecorded) {
+        pulseStripeAnimator->animateLeds( leds, millis());
+        FastLED.show();
+
+        uint8_t currentPinNumber = bPinRecorder->getNumRecordedButtonPins();
+        CRGB currentPinColor = Const::playerColors[ currentPinNumber];
+        if (currentPinColor != pulseStripeAnimator->getPulseColor()) {
+          pulseStripeAnimator->setPulseColor( currentPinColor);
+        }
+        
+        bool finished = bPinRecorder->loop();
+        if ( finished) {
           state = GameState::InitPong;
         }
         break;
       }
 
     case GameState::InitPong: {
+      Serial.println("Initializing Pong!");
         uint8_t numButtonPins = bPinRecorder->getNumRecordedButtonPins();
         uint8_t * buttonPins = new uint8_t[ numButtonPins];
         bPinRecorder->getRecordedButtonPins( buttonPins);
         delete bPinRecorder;
+        delete pulseStripeAnimator;
 
-        pong = new Pong( buttonPins, numButtonPins, Const::LIFES, Const::BUTTON_LOCK_TIME, Const::NUM_LEDS, Const::STRIPE_LENGTH, Const::BRIGHTNESS);
+        pong = new Pong( buttonPins, numButtonPins, Const::LIFES, Const::BUTTON_LOCK_TIME, leds, Const::NUM_LEDS, Const::STRIPE_LENGTH);
 
         state = GameState::PlayPong;
         break;

@@ -22,10 +22,10 @@
 #include "helper.h"
 
 Pong::Pong(uint8_t * player_pins, uint8_t num_players, uint8_t lifes, uint16_t button_lock_time,
-           uint8_t num_leds, double stripe_length, uint8_t brightness)
+           CRGB *leds, uint8_t num_leds, double stripe_length)
   : num_players( num_players),
     num_players_alive( num_players),
-    screen(num_leds, brightness),
+    screen( leds, num_leds),
     ball(0, 0, num_leds - 1, 0.2, 1),
     restart_lock_time( button_lock_time)
 {

@@ -3,7 +3,7 @@
 
 ButtonPinRecorder::ButtonPinRecorder( uint16_t recordingDuration)
   : recordingDuration( recordingDuration),
-    numRecordedButtonPinsMin( 3),
+    numRecordedButtonPinsMin( 2),
     numRecordedButtonPinsMax( 6) {}
 
 
@@ -20,10 +20,8 @@ bool ButtonPinRecorder::loop() {
     if (digitalRead( recordableButtonPins[ i]) == HIGH) {
       addPin( recordableButtonPins[ i]);
 
-      // trigger recording time
-      if (recordingStartTime == 0) {
-        recordingStartTime = millis();
-      }
+      // reset recording time
+      recordingStartTime = millis();
     }
   }
 

@@ -34,7 +34,7 @@ extern const TProgmemPalette16 myRedWhiteBluePalette_p PROGMEM;
 
 class Screen {
   public:
-    Screen(uint8_t num_leds, uint8_t brightness);
+    Screen(CRGB *leds, uint8_t num_leds);
 
     void show_score( Player * players, uint8_t num_players);
     void advance_ball( Ball &b);
@@ -54,7 +54,7 @@ class Screen {
     CRGB *leds;
     //ESPIChipsets led_type;
     //EOrder led_color_order;
-    uint8_t brightness;
+    //uint8_t brightness;
     uint8_t color_pallette_updates_per_second;
     CRGBPalette16 currentPalette;
     TBlendType currentBlending;

@@ -21,8 +21,10 @@ const double STRIPE_LENGTH = 1.66;
 //const ESPIChipsets LED_TYPE = APA102;
 const uint8_t BRIGHTNESS = 64; //max. 255
 
-
-const long unsigned int  playerColors[ 6] = { CRGB::Green, CRGB::Blue, CRGB::Red, CRGB::Yellow, CRGB::Cyan, CRGB::Magenta};
+const uint8_t numPlayersMin = 2;
+const uint8_t numPlayersMax = 8;
+//const long unsigned int  playerColors[ 8] = { CRGB::Blue, CRGB::Red, CRGB::LightGreen, CRGB::Yellow, CRGB::Magenta, CRGB::Cyan, CRGB::DarkGreen, CRGB::Orange};
+const CRGB  playerColors[ 8] = { CHSV( 0, 255, 255), CHSV( 127, 255, 255), CHSV( 191, 255, 255), CHSV( 64, 255, 255), CHSV( 223, 255, 255), CHSV( 96, 255, 255), CHSV( 160, 255, 255), CHSV( 32, 255, 255)};
 }
 
 

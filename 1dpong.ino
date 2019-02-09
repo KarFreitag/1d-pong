@@ -38,7 +38,9 @@ void setup() {
 
   // set chipset type, color order of LEDs and number of LEDs on stripe
   //FastLED.addLeds<led_type, led_color_order>(leds, num_leds);
-  FastLED.addLeds<APA102, BGR>(leds, Const::NUM_LEDS).setCorrection( TypicalLEDStrip );
+  FastLED.addLeds<APA102, BGR>(leds, Const::NUM_LEDS);
+  FastLED.setCorrection( TypicalLEDStrip );
+  FastLED.setTemperature( UncorrectedTemperature);
   
   // set global brightness
   FastLED.setBrightness( Const::BRIGHTNESS );
@@ -55,6 +57,13 @@ void setup() {
 }
 
 void loop() {
+//  for (int i=2; i<10; ++i) {
+//    Serial.println( "Pin" + String( i) + " " + String( digitalRead( i)));  
+//  }
+//  Serial.println( "");
+//  delay( 1000);
+
+  
   switch (state) {
     case GameState::InitPinRecorder: {
       Serial.println("Initializing pin recorder!");

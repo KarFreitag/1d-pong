@@ -1,10 +1,11 @@
 
 #include "ButtonPinRecorder.h"
+#include "Constants.h"
 
 ButtonPinRecorder::ButtonPinRecorder( uint16_t recordingDuration)
   : recordingDuration( recordingDuration),
-    numRecordedButtonPinsMin( 2),
-    numRecordedButtonPinsMax( 6) {}
+    numRecordedButtonPinsMin( Const::numPlayersMin),
+    numRecordedButtonPinsMax( Const::numPlayersMax) {}
 
 
 ButtonPinRecorder::ButtonPinRecorder( uint16_t recordingDuration, uint8_t numRecordedButtonPinsMin, uint8_t numRecordedButtonPinsMax)

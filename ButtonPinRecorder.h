@@ -27,8 +27,8 @@ class ButtonPinRecorder {
     uint8_t numRecordedButtonPinsMin;
     uint8_t numRecordedButtonPinsMax;
     
-    uint8_t recordedButtonPins[6];
-    uint8_t recordableButtonPins[6] = { 2, 3, 4, 5, 8, 9};
+    uint8_t recordedButtonPins[8];
+    uint8_t recordableButtonPins[8] = { 2, 3, 4, 5, 6, 7, 8, 9};
 };
 
 #endif

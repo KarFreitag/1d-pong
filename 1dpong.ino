@@ -38,7 +38,9 @@ void setup() {
 
   // set chipset type, color order of LEDs and number of LEDs on stripe
   //FastLED.addLeds<led_type, led_color_order>(leds, num_leds);
-  FastLED.addLeds<APA102, BGR>(leds, Const::NUM_LEDS);
+  const int clockPin = 13;
+  const int dataPin = 11;
+  FastLED.addLeds<APA102, dataPin, clockPin, BGR>(leds, Const::NUM_LEDS);
   FastLED.setCorrection( TypicalLEDStrip );
   FastLED.setTemperature( UncorrectedTemperature);
   
@@ -112,4 +114,3 @@ void loop() {
       }
   }
 }
-

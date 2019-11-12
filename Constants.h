@@ -9,7 +9,7 @@ namespace Const {
 const uint16_t POWERUP_SAFETY_DURATION = 3000;
 
 // Player settings
-const uint8_t LIFES = 8;
+const uint8_t LIFES = 6;
 const uint16_t BUTTON_LOCK_TIME = 500;
 const uint16_t BUTTON_PIN_RECORDING_DURATION = 6000;
 const unsigned long BUTTON_PIN_RECORDING_PULSE_DURATION = 2000;

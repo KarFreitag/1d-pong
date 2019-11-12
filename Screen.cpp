@@ -24,19 +24,22 @@ Screen::Screen(CRGB* leds, uint8_t num_leds) {
   //led_type = type;
   //led_color_order = order;
   this->num_leds = num_leds;
-  color_pallette_updates_per_second = 100;
+  color_pallette_updates_per_second = 35;
+
+  currentPalette = RainbowColors_p;
+  currentBlending = LINEARBLEND;
 
   this->leds = leds;
   init();
 }
 
 void Screen::init() {
-//  // set chipset type, color order of LEDs and number of LEDs on stripe
-//  //FastLED.addLeds<led_type, led_color_order>(leds, num_leds);
-//  FastLED.addLeds<APA102, BGR>(leds, num_leds).setCorrection( TypicalLEDStrip );
-//
-//  // set global brightness
-//  FastLED.setBrightness( brightness );
+  //  // set chipset type, color order of LEDs and number of LEDs on stripe
+  //  //FastLED.addLeds<led_type, led_color_order>(leds, num_leds);
+  //  FastLED.addLeds<APA102, BGR>(leds, num_leds).setCorrection( TypicalLEDStrip );
+  //
+  //  // set global brightness
+  //  FastLED.setBrightness( brightness );
 
   // turn off all LEDs
   for (uint8_t i = 0; i < num_leds; i++) {
@@ -111,7 +114,7 @@ void Screen::draw(Player * players, uint8_t num_players, Ball &ball) {
 }
 
 void Screen::show_color_palette() {
-  ChangePalettePeriodically();
+  //ChangePalettePeriodically();
 
   static uint8_t startIndex = 0;
   startIndex = startIndex + 1; /* motion speed */
@@ -129,7 +132,7 @@ void Screen::FillLEDsFromPaletteColors( uint8_t colorIndex)
 
   for ( int i = 0; i < num_leds; i++) {
     leds[i] = ColorFromPalette( currentPalette, colorIndex, brightness, currentBlending);
-    colorIndex += 3;
+    colorIndex += 2;
   }
 }
 

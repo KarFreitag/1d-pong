@@ -50,7 +50,7 @@ void Ball::reverse_direction() {
 }
 
 void Ball::increase_speed() {
-  speed *= 1.05;
+  speed *= 1.1;
 }
 
 bool Ball::is_inside_hitbox(Player &player) {

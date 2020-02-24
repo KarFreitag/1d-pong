@@ -34,6 +34,7 @@ Pong::Pong(uint8_t * player_pins, uint8_t num_players, uint8_t lifes, uint16_t b
   state = WAITING;
   auto_serve_timeout = 2000;
   waiting_time = millis();
+  isFirstRun = true;
   randomSeed( millis());
 }
 
@@ -48,7 +49,7 @@ void Pong::game_logic() {
   switch (state) {
     case WAITING:
       screen.show_score( players, num_players);
-      if (should_restart_pong()) {
+      if (should_restart_pong() || (isFirstRun && (millis() - waiting_time >= 10000))) {
         choose_random_player();
 
         for (int i = 0; i < num_players; ++i) {
@@ -170,4 +171,3 @@ bool Pong::should_restart_pong() {
     return false;  
   }
 }
-

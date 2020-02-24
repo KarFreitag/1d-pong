@@ -54,6 +54,7 @@ class Pong {
     Ball ball;
     unsigned long restart_lock_timestamp;
     unsigned long restart_lock_time;
+    bool isFirstRun;
 
     unsigned long autoserve_time;
     unsigned long waiting_time;

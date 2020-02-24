@@ -16,7 +16,7 @@ const unsigned long BUTTON_PIN_RECORDING_PULSE_DURATION = 2000;
 
 // FastLED settings
 const uint8_t NUM_LEDS = 100;
-const double STRIPE_LENGTH = 1.66;
+const double STRIPE_LENGTH = 0.83;
 //const EOrder LED_COLOR_ORDER = BGR;
 //const ESPIChipsets LED_TYPE = APA102;
 const uint8_t BRIGHTNESS = 64; //max. 255

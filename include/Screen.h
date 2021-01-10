@@ -46,13 +46,6 @@ class Screen {
     void clear(Ball &ball);
     void reset( Player * players, uint8_t num_players);
 
-    void show_color_palette();
-    void FillLEDsFromPaletteColors(uint8_t colorIndex);
-    void ChangePalettePeriodically();
-    void SetupTotallyRandomPalette();
-    void SetupBlackAndWhiteStripedPalette();
-    void SetupPurpleAndGreenPalette();
-
     CRGB * leds; // TODO: make leds private again
     void add_drawable(Drawable * drawable, Layer layer);
     void remove_drawable(Drawable * drawable);

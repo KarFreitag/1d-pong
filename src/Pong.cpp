@@ -64,7 +64,7 @@ void Pong::game_logic() {
       break;
       
     case IDLE:
-      Screen::get()->show_color_palette();
+      // TODO: update screen saver
       break;
       
     case PLAYING:

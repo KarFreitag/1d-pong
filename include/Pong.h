@@ -33,15 +33,13 @@
 
 class Pong {
   public:
-    Pong(uint8_t * player_pins, uint8_t num_players, uint8_t lifes, uint16_t button_lock_time,
-         CRGB *leds, uint8_t num_leds, double stripe_length);
+    Pong( uint8_t * player_pins, uint8_t num_players, uint8_t lifes, uint16_t button_lock_time, uint8_t num_leds, double stripe_length);
 
     void game_logic();
 
   private:
     enum State {
       IDLE = 0,
-      DEMO,
       PLAYING,
       SERVE,
       WAITING
@@ -50,7 +48,6 @@ class Pong {
     Player* players;
     uint8_t num_players;
     uint8_t num_players_alive;
-    Screen screen;
     Ball ball;
     unsigned long restart_lock_timestamp;
     unsigned long restart_lock_time;

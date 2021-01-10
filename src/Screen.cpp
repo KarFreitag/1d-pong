@@ -1,52 +1,32 @@
-/*
-   1D Pong - Pong-like game run on an Arduino MCU
-   Copyright (C) 2018  Stephan Riedel - raidlman@gmail.com
-
-   This program is free software: you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation, either version 3 of the License, or
-   (at your option) any later version.
-
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-
-   You should have received a copy of the GNU General Public License
-   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
 // Screen.cpp
 #include "Screen.h"
-#include <FastLED.h>
+#include "Constants.h"
 
-Screen::Screen(CRGB* leds, uint8_t num_leds) {
-  //led_type = type;
-  //led_color_order = order;
-  this->num_leds = num_leds;
+Screen * Screen::instance = 0;
+
+Screen::Screen(uint8_t num_leds) {
   color_pallette_updates_per_second = 35;
 
   currentPalette = RainbowColors_p;
   currentBlending = LINEARBLEND;
 
-  this->leds = leds;
-  init();
+  this->num_leds = num_leds;
+  this->leds = new CRGB[ Const::NUM_LEDS];
+  
+  // set chipset type, color order of LEDs and number of LEDs on stripe
+  FastLED.addLeds<APA102, Const::dataPin, Const::clockPin, BGR>( this->leds, this->num_leds);
+  FastLED.setCorrection( TypicalLEDStrip);
+  FastLED.setTemperature( UncorrectedTemperature);
+  
+  // set global brightness
+  FastLED.setBrightness( Const::BRIGHTNESS);
 }
 
-void Screen::init() {
-  //  // set chipset type, color order of LEDs and number of LEDs on stripe
-  //  //FastLED.addLeds<led_type, led_color_order>(leds, num_leds);
-  //  FastLED.addLeds<APA102, BGR>(leds, num_leds).setCorrection( TypicalLEDStrip );
-  //
-  //  // set global brightness
-  //  FastLED.setBrightness( brightness );
-
-  // turn off all LEDs
-  for (uint8_t i = 0; i < num_leds; i++) {
-    leds[i] = CRGB::Black;
+Screen * Screen::get() {
+  if (!Screen::instance) {
+    Screen::instance = new Screen(Const::NUM_LEDS);
   }
-
-  FastLED.show();
+  return Screen::instance;
 }
 
 void Screen::draw_player_score(Player p) {

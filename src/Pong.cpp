@@ -21,11 +21,9 @@
 
 #include "helper.h"
 
-Pong::Pong(uint8_t * player_pins, uint8_t num_players, uint8_t lifes, uint16_t button_lock_time,
-           CRGB *leds, uint8_t num_leds, double stripe_length)
+Pong::Pong( uint8_t * player_pins, uint8_t num_players, uint8_t lifes, uint16_t button_lock_time, uint8_t num_leds, double stripe_length)
   : num_players( num_players),
     num_players_alive( num_players),
-    screen( leds, num_leds),
     ball(0, 0, num_leds - 1, 0.2, 1),
     restart_lock_time( button_lock_time)
 {
@@ -41,21 +39,21 @@ Pong::Pong(uint8_t * player_pins, uint8_t num_players, uint8_t lifes, uint16_t b
 void Pong::game_logic() {
   if (should_restart_pong()) {
     //screen.reset( players, num_players);
-    screen.clear(ball);
+    Screen::get()->clear(ball);
     waiting_time = millis();
     state = WAITING;
   }
 
   switch (state) {
     case WAITING:
-      screen.show_score( players, num_players);
+      Screen::get()->show_score( players, num_players);
       if (should_restart_pong() || (isFirstRun && (millis() - waiting_time >= 10000))) {
         choose_random_player();
 
         for (int i = 0; i < num_players; ++i) {
           players[i].reset_lifes();
         }
-        screen.reset( players, num_players);
+        Screen::get()->reset( players, num_players);
         num_players_alive = num_players;
 
         state = SERVE;
@@ -66,13 +64,13 @@ void Pong::game_logic() {
       break;
       
     case IDLE:
-      screen.show_color_palette();
+      Screen::get()->show_color_palette();
       break;
       
     case PLAYING:
       if (ball.timer()) {
         ball.advance();
-        screen.draw( players, num_players, ball);
+        Screen::get()->draw( players, num_players, ball);
       }
 
       if ( players[ active_player].is_position_within_hitbox( ball.get_previous_position())
@@ -82,13 +80,13 @@ void Pong::game_logic() {
           --num_players_alive;
 
           if (num_players_alive <= 1) {
-            screen.reset( players, num_players);
+            Screen::get()->reset( players, num_players);
             waiting_time = millis();
             state = WAITING;
             break;
           }
         }
-        screen.show_score( players, num_players);
+        Screen::get()->show_score( players, num_players);
         prepare_next_serve();
         break;
       }

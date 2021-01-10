@@ -34,8 +34,7 @@ extern const TProgmemPalette16 myRedWhiteBluePalette_p PROGMEM;
 
 class Screen {
   public:
-    Screen(CRGB *leds, uint8_t num_leds);
-
+    static Screen * get();
     void show_score( Player * players, uint8_t num_players);
     void advance_ball( Ball &b);
     void draw(Player * players, uint8_t num_players, Ball &ball);
@@ -49,21 +48,20 @@ class Screen {
     void SetupBlackAndWhiteStripedPalette();
     void SetupPurpleAndGreenPalette();
 
-  private:
-    uint8_t num_leds;
-    CRGB *leds;
-    //ESPIChipsets led_type;
-    //EOrder led_color_order;
-    //uint8_t brightness;
-    uint8_t color_pallette_updates_per_second;
-    CRGBPalette16 currentPalette;
-    TBlendType currentBlending;
+    CRGB *leds; // TODO: make leds private again
 
-    void init();
+  private:
+    Screen(uint8_t num_leds);
     void draw_player_score(Player p);
     void clear_led(uint8_t num);
     void clear_all_leds();
     void draw_ball(uint8_t num);
+
+    static Screen * instance;
+    uint8_t num_leds;
+    uint8_t color_pallette_updates_per_second;
+    CRGBPalette16 currentPalette;
+    TBlendType currentBlending;
 };
 
 #endif

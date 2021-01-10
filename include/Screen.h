@@ -26,14 +26,19 @@
   #include <WProgram.h>
 #endif
 #include <FastLED.h>
+#include <ArduinoSTL.h>
+
 #include "Ball.h"
 #include "Player.h"
+#include "Drawable.h"
 
 extern CRGBPalette16 myRedWhiteBluePalette;
 extern const TProgmemPalette16 myRedWhiteBluePalette_p PROGMEM;
 
 class Screen {
   public:
+    enum Layer {Invisible, Bottom, Background, Top};
+
     static Screen * get();
     void show_score( Player * players, uint8_t num_players);
     void advance_ball( Ball &b);
@@ -48,17 +53,20 @@ class Screen {
     void SetupBlackAndWhiteStripedPalette();
     void SetupPurpleAndGreenPalette();
 
-    CRGB *leds; // TODO: make leds private again
+    CRGB * leds; // TODO: make leds private again
+    void add_drawable(Drawable * drawable, Layer layer);
+    void remove_drawable(Drawable * drawable);
+    void draw();
 
   private:
-    Screen(uint8_t num_leds);
+    Screen();
     void draw_player_score(Player p);
     void clear_led(uint8_t num);
     void clear_all_leds();
     void draw_ball(uint8_t num);
 
     static Screen * instance;
-    uint8_t num_leds;
+    std::vector<std::pair< Drawable*, Layer>> drawables;
     uint8_t color_pallette_updates_per_second;
     CRGBPalette16 currentPalette;
     TBlendType currentBlending;

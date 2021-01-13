@@ -26,22 +26,7 @@ Screen *Screen::get()
   return Screen::instance;
 }
 
-void Screen::advance_ball(Ball &b)
-{
-  leds[b.get_position()] = CRGB::Black;
-
-  b.set_position(b.get_position() + b.get_direction());
-  leds[b.get_position()] = CRGB::White;
-
-  FastLED.show();
-}
-
-void Screen::clear_led(uint8_t num)
-{
-  leds[num] = CRGB::Black;
-}
-
-void Screen::clear_all_leds()
+void Screen::clear()
 {
   for (uint8_t i = 0; i < Const::NUM_LEDS; i++)
   {
@@ -49,27 +34,9 @@ void Screen::clear_all_leds()
   }
 }
 
-void Screen::clear(Ball &ball)
-{
-  clear_led(ball.get_position());
-}
-
 void Screen::reset(std::vector<Player> players, uint8_t num_players)
 {
-  clear_all_leds();
-}
-
-void Screen::draw_ball(uint8_t num)
-{
-  leds[num] = CRGB::White;
-}
-
-void Screen::draw(std::vector<Player> players, uint8_t num_players, Ball &ball)
-{
-  clear_led(ball.get_previous_position());
-
-  draw_ball(ball.get_position());
-  FastLED.show();
+  clear();
 }
 
 void Screen::add_drawable(Drawable *drawable, Layer layer)
@@ -90,7 +57,7 @@ void Screen::remove_drawable(Drawable * drawable)
 
 void Screen::draw()
 {
-  this->clear_all_leds();
+  this->clear();
 
   for (int layer=Layer::Bottom; layer <= Layer::Top; layer++) {
     for (auto it : this->drawables) {

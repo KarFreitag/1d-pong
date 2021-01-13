@@ -40,9 +40,6 @@ class Screen {
     enum Layer {Invisible, Bottom, Background, Players, Balls, Top};
 
     static Screen * get();
-    void advance_ball( Ball &b);
-    void draw(std::vector<Player> players, uint8_t num_players, Ball &ball);
-    void clear(Ball &ball);
     void reset( std::vector<Player> players, uint8_t num_players);
 
     CRGB * leds; // TODO: make leds private again
@@ -52,9 +49,7 @@ class Screen {
 
   private:
     Screen();
-    void clear_led(uint8_t num);
-    void clear_all_leds();
-    void draw_ball(uint8_t num);
+    void clear();
 
     static Screen * instance;
     std::vector<std::pair< Drawable*, Layer>> drawables;

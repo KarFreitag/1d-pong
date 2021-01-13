@@ -33,6 +33,8 @@ Pong::Pong( std::vector<uint8_t> player_pins, uint8_t lifes, uint16_t button_loc
     Screen::get()->add_drawable(player, Screen::Layer::Players);
   }
 
+  Screen::get()->add_drawable( &ball, Screen::Layer::Balls);
+
   state = WAITING;
   auto_serve_timeout = 2000;
   waiting_time = millis();
@@ -43,15 +45,12 @@ Pong::Pong( std::vector<uint8_t> player_pins, uint8_t lifes, uint16_t button_loc
 void Pong::update(unsigned long runtime)
 {
  if (should_restart_pong()) {
-    //screen.reset( players, num_players);
-    Screen::get()->clear(ball);
     waiting_time = runtime;
     state = WAITING;
   }
 
   switch (state) {
     case WAITING:
-      // Screen::get()->show_score( players, num_players);
       if (should_restart_pong() || (isFirstRun && (runtime - waiting_time >= 10000))) {
         choose_random_player();
 
@@ -75,7 +74,6 @@ void Pong::update(unsigned long runtime)
     case PLAYING:
       if (ball.timer()) {
         ball.advance();
-        Screen::get()->draw( players, num_players, ball);
       }
 
       if ( players[ active_player].is_position_within_hitbox( ball.get_previous_position())
@@ -91,7 +89,6 @@ void Pong::update(unsigned long runtime)
             break;
           }
         }
-        // Screen::get()->show_score( players, num_players);
         prepare_next_serve();
         break;
       }

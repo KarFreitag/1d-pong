@@ -33,7 +33,7 @@
 
 class Pong {
   public:
-    Pong( uint8_t * player_pins, uint8_t num_players, uint8_t lifes, uint16_t button_lock_time, uint8_t num_leds, double stripe_length);
+    Pong( std::vector<uint8_t> player_pins, uint8_t lifes, uint16_t button_lock_time, uint8_t num_leds, double stripe_length);
 
     void game_logic();
 

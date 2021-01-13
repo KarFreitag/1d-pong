@@ -129,6 +129,8 @@ void Screen::remove_drawable(Drawable * drawable)
 
 void Screen::draw()
 {
+  this->clear_all_leds();
+  
   for (int layer=Layer::Bottom; layer <= Layer::Top; layer++) {
     for (auto it : this->drawables) {
       if (it.second == layer) {

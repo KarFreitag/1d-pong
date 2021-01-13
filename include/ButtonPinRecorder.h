@@ -1,6 +1,5 @@
 // ButtonPinRecorder.h
-#ifndef BUTTONPINRECORDER_H
-#define BUTTONPINRECORDER_H
+#pragma once
 
 #if defined(ARDUINO) && ARDUINO >= 100
 #include <Arduino.h>
@@ -8,27 +7,30 @@
 #include <WProgram.h>
 #endif
 
-class ButtonPinRecorder {
+#include <ArduinoSTL.h>
+
+#include "Updateable.h"
+
+class ButtonPinRecorder: public Updateable {
   public:
     ButtonPinRecorder();
     ButtonPinRecorder( uint16_t recordingDuration);
     ButtonPinRecorder( uint16_t recordingDuration, uint8_t numRecordedButtonPinsMin, uint8_t numRecordedButtonPinsMax);
-    bool loop();
-    uint8_t getNumRecordedButtonPins();
-    void getRecordedButtonPins( uint8_t * recordedButtonPins);
+
+    void update(unsigned long runtime);
+    
+    bool hasFinished();
+    std::vector<uint8_t> getRecordedButtonPins();
 
   private:
     void addPin( uint8_t pin);
 
     unsigned long recordingStartTime = 0;
     uint16_t recordingDuration;
-
-    uint8_t numRecordedButtonPins = 0;
     uint8_t numRecordedButtonPinsMin;
     uint8_t numRecordedButtonPinsMax;
     
-    uint8_t recordedButtonPins[8];
+    std::vector<uint8_t> recordedButtonPins;
+    bool finished = false;
     uint8_t recordableButtonPins[8] = { 2, 3, 4, 5, 6, 7, 8, 9};
 };
-
-#endif

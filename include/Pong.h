@@ -30,14 +30,21 @@
 #include "Ball.h"
 #include "Player.h"
 #include "Screen.h"
+#include "Updateable.h"
 
-class Pong {
+class Pong: public Updateable {
   public:
     Pong( std::vector<uint8_t> player_pins, uint8_t lifes, uint16_t button_lock_time, uint8_t num_leds, double stripe_length);
-
-    void game_logic();
+    void update(unsigned long runtime);
 
   private:
+    void prepare_next_serve();
+    bool autoserve_timer();
+    bool ball_is_in_allowed_position();
+    void choose_random_player();
+    void choose_next_player();
+    bool should_restart_pong();
+
     enum State {
       IDLE = 0,
       PLAYING,
@@ -45,7 +52,7 @@ class Pong {
       WAITING
     } state;
     
-    Player* players;
+    std::vector<Player> players;
     uint8_t num_players;
     uint8_t num_players_alive;
     Ball ball;
@@ -57,12 +64,6 @@ class Pong {
     unsigned long waiting_time;
     uint16_t auto_serve_timeout;
     uint8_t active_player;
-    void prepare_next_serve();
-    bool autoserve_timer();
-    bool ball_is_in_allowed_position();
-    void choose_random_player();
-    void choose_next_player();
-    bool should_restart_pong();
 };
 
 #endif

@@ -7,5 +7,5 @@ class Drawable
 {
 public:
     virtual ~Drawable() {}
-    virtual void draw(CRGB * leds);
+    virtual void draw(CRGB *leds);
 };

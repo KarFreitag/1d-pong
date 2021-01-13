@@ -37,14 +37,13 @@ extern const TProgmemPalette16 myRedWhiteBluePalette_p PROGMEM;
 
 class Screen {
   public:
-    enum Layer {Invisible, Bottom, Background, Top};
+    enum Layer {Invisible, Bottom, Background, Players, Balls, Top};
 
     static Screen * get();
-    void show_score( Player * players, uint8_t num_players);
     void advance_ball( Ball &b);
-    void draw(Player * players, uint8_t num_players, Ball &ball);
+    void draw(std::vector<Player> players, uint8_t num_players, Ball &ball);
     void clear(Ball &ball);
-    void reset( Player * players, uint8_t num_players);
+    void reset( std::vector<Player> players, uint8_t num_players);
 
     CRGB * leds; // TODO: make leds private again
     void add_drawable(Drawable * drawable, Layer layer);
@@ -53,16 +52,12 @@ class Screen {
 
   private:
     Screen();
-    void draw_player_score(Player p);
     void clear_led(uint8_t num);
     void clear_all_leds();
     void draw_ball(uint8_t num);
 
     static Screen * instance;
     std::vector<std::pair< Drawable*, Layer>> drawables;
-    uint8_t color_pallette_updates_per_second;
-    CRGBPalette16 currentPalette;
-    TBlendType currentBlending;
 };
 
 #endif

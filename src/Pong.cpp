@@ -29,6 +29,10 @@ Pong::Pong( std::vector<uint8_t> player_pins, uint8_t lifes, uint16_t button_loc
 {
   players = createPlayers( num_players, player_pins, lifes, num_leds, button_lock_time);
 
+  for (auto player = players.begin(); player != players.end(); ++player) {
+    Screen::get()->add_drawable(player, Screen::Layer::Players);
+  }
+
   state = WAITING;
   auto_serve_timeout = 2000;
   waiting_time = millis();
@@ -36,18 +40,19 @@ Pong::Pong( std::vector<uint8_t> player_pins, uint8_t lifes, uint16_t button_loc
   randomSeed( millis());
 }
 
-void Pong::game_logic() {
-  if (should_restart_pong()) {
+void Pong::update(unsigned long runtime)
+{
+ if (should_restart_pong()) {
     //screen.reset( players, num_players);
     Screen::get()->clear(ball);
-    waiting_time = millis();
+    waiting_time = runtime;
     state = WAITING;
   }
 
   switch (state) {
     case WAITING:
-      Screen::get()->show_score( players, num_players);
-      if (should_restart_pong() || (isFirstRun && (millis() - waiting_time >= 10000))) {
+      // Screen::get()->show_score( players, num_players);
+      if (should_restart_pong() || (isFirstRun && (runtime - waiting_time >= 10000))) {
         choose_random_player();
 
         for (int i = 0; i < num_players; ++i) {
@@ -58,7 +63,7 @@ void Pong::game_logic() {
 
         state = SERVE;
       }
-      if (millis() - waiting_time >= 30000) {
+      if (runtime - waiting_time >= 30000) {
         state = IDLE;
       }
       break;
@@ -81,12 +86,12 @@ void Pong::game_logic() {
 
           if (num_players_alive <= 1) {
             Screen::get()->reset( players, num_players);
-            waiting_time = millis();
+            waiting_time = runtime;
             state = WAITING;
             break;
           }
         }
-        Screen::get()->show_score( players, num_players);
+        // Screen::get()->show_score( players, num_players);
         prepare_next_serve();
         break;
       }

@@ -59,16 +59,7 @@ void setup()
 
 void loop()
 {
-  unsigned long current_time = millis();
-
-  for (auto updateable : updateables)
-  {
-    updateable->update(current_time);
-  }
-
-  switch (state)
-  {
-  case GameState::RecordPins:
+  if (state == GameState::RecordPins)
   {
     uint8_t currentPinNumber = bPinRecorder->getRecordedButtonPins().size();
     CRGB currentPinColor = Const::playerColors[currentPinNumber];
@@ -82,22 +73,24 @@ void loop()
       std::vector<uint8_t> buttonPins = bPinRecorder->getRecordedButtonPins();
       Screen::get()->remove_drawable(recordAnimator);
       updateables.clear();
-      delete recordAnimator, bPinRecorder;
+      delete recordAnimator;
+      delete bPinRecorder;
 
+      Serial.println("Starting loopingLEDy!");
       pong = new Pong(buttonPins, Const::LIFES, Const::BUTTON_LOCK_TIME_MS, Const::NUM_LEDS, Const::STRIPE_LENGTH);
+      updateables.push_back(pong);
 
       state = GameState::PlayPong;
     }
-
-    Screen::get()->draw();
-    break;
   }
 
-  case GameState::PlayPong:
+  unsigned long current_time = millis();
+
+  for (auto updateable : updateables)
   {
-    pong->game_logic();
-    break;
+    updateable->update(current_time);
   }
-  }
+
+  Screen::get()->draw();
   // delay(1000);
 }

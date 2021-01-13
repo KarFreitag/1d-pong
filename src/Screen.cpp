@@ -6,11 +6,6 @@ Screen *Screen::instance = 0;
 
 Screen::Screen()
 {
-  color_pallette_updates_per_second = 35;
-
-  currentPalette = RainbowColors_p;
-  currentBlending = LINEARBLEND;
-
   this->leds = new CRGB[Const::NUM_LEDS];
 
   // set chipset type, color order of LEDs and number of LEDs on stripe
@@ -29,34 +24,6 @@ Screen *Screen::get()
     Screen::instance = new Screen();
   }
   return Screen::instance;
-}
-
-void Screen::draw_player_score(Player p)
-{
-  float hitbox_center = (float)(p.hitbox_max + p.hitbox_min) / 2.0f;
-  uint8_t num_lost_life_leds_half = 0.5f * (float)(p.initial_lifes) * (1.0f - (float)p.lifes / (float)p.initial_lifes);
-
-  for (uint8_t i = p.hitbox_min; i <= p.hitbox_max; ++i)
-  {
-    if (abs(hitbox_center - i) < num_lost_life_leds_half)
-    {
-      leds[i] = p.lost_lifes_color;
-    }
-    else
-    {
-      leds[i] = p.lifes_color;
-    }
-  }
-}
-
-void Screen::show_score(Player *players, uint8_t num_players)
-{
-  for (int i = 0; i < num_players; ++i)
-  {
-    draw_player_score(players[i]);
-  }
-
-  FastLED.show();
 }
 
 void Screen::advance_ball(Ball &b)
@@ -87,10 +54,9 @@ void Screen::clear(Ball &ball)
   clear_led(ball.get_position());
 }
 
-void Screen::reset(Player *players, uint8_t num_players)
+void Screen::reset(std::vector<Player> players, uint8_t num_players)
 {
   clear_all_leds();
-  show_score(players, num_players);
 }
 
 void Screen::draw_ball(uint8_t num)
@@ -98,14 +64,9 @@ void Screen::draw_ball(uint8_t num)
   leds[num] = CRGB::White;
 }
 
-void Screen::draw(Player *players, uint8_t num_players, Ball &ball)
+void Screen::draw(std::vector<Player> players, uint8_t num_players, Ball &ball)
 {
   clear_led(ball.get_previous_position());
-
-  for (int i = 0; i < num_players; ++i)
-  {
-    draw_player_score(players[i]);
-  }
 
   draw_ball(ball.get_position());
   FastLED.show();
@@ -130,7 +91,7 @@ void Screen::remove_drawable(Drawable * drawable)
 void Screen::draw()
 {
   this->clear_all_leds();
-  
+
   for (int layer=Layer::Bottom; layer <= Layer::Top; layer++) {
     for (auto it : this->drawables) {
       if (it.second == layer) {

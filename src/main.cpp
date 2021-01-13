@@ -34,6 +34,9 @@ PinRecordAnimator * recordAnimator;
 
 std::vector<Updateable*> updateables;
 
+unsigned int loop_counter = 0;
+unsigned int loop_durations[10];
+
 void setup() {
   delay( Const::POWERUP_SAFETY_DURATION_MS); // power-up safety delay
 
@@ -47,10 +50,28 @@ void setup() {
   Screen::get()->add_drawable( recordAnimator, Screen::Layer::Top);
   updateables.push_back(recordAnimator);
 
+  loop_durations[loop_counter] = millis();
+  loop_counter++;
+
   Serial.println("Finished setup of arduino!");
 }
 
 void loop() {
+  if (loop_counter == 10) {
+    loop_counter = 0;
+    float loops_time = 0;
+    for (int i=0; i<10; ++i) {
+      loops_time += loop_durations[i];
+    }
+    
+    float mean_loop_duration = loops_time / 10.0;
+    float fps = 1000 / mean_loop_duration;
+    Serial.println("FPS: " + String(fps));
+  }
+
+  loop_durations[loop_counter] = millis();
+  loop_counter++;
+
   unsigned long current_time = millis();
 
   for (auto updateable : updateables) {

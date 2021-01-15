@@ -34,11 +34,6 @@ void Screen::clear()
   }
 }
 
-void Screen::reset(std::vector<Player> players, uint8_t num_players)
-{
-  clear();
-}
-
 void Screen::add_drawable(Drawable *drawable, Layer layer)
 {
   this->drawables.push_back(std::pair<Drawable *, Layer>(drawable, layer));

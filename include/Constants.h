@@ -1,6 +1,5 @@
 
-#ifndef CONSTANTS_H
-#define CONSTANTS_H
+#pragma once
 
 #include <FastLED.h>
 
@@ -33,5 +32,3 @@ namespace Const
         CHSV(160, 255, 255),
         CHSV(32, 255, 255)};
 }
-
-#endif

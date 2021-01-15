@@ -57,9 +57,7 @@ void Pong::update(unsigned long runtime)
         for (int i = 0; i < num_players; ++i) {
           players[i].reset_lifes();
         }
-        Screen::get()->reset( players, num_players);
         num_players_alive = num_players;
-
         state = SERVE;
       }
       if (runtime - waiting_time >= 30000) {
@@ -83,7 +81,6 @@ void Pong::update(unsigned long runtime)
           --num_players_alive;
 
           if (num_players_alive <= 1) {
-            Screen::get()->reset( players, num_players);
             waiting_time = runtime;
             state = WAITING;
             break;

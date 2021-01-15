@@ -23,6 +23,8 @@
 #include "ButtonPinRecorder.h"
 #include "Constants.h"
 #include "PinRecordAnimator.h"
+#include "helper.h"
+#include "ScreenSaver.h"
 
 enum class GameState
 {
@@ -35,6 +37,7 @@ GameState state = GameState::RecordPins;
 Pong *pong;
 ButtonPinRecorder *bPinRecorder;
 PinRecordAnimator *recordAnimator;
+ScreenSaver screenSaver;
 
 std::vector<Updateable *> updateables;
 
@@ -54,6 +57,9 @@ void setup()
   bPinRecorder = new ButtonPinRecorder(Const::BUTTON_PIN_RECORDING_DURATION);
   updateables.push_back(bPinRecorder);
 
+  updateables.push_back( &screenSaver);
+  Screen::get()->add_drawable( &screenSaver, Screen::Layer::Top);
+
   Serial.println("Finished setup of arduino!");
 }
 
@@ -72,8 +78,11 @@ void loop()
     {
       std::vector<uint8_t> buttonPins = bPinRecorder->getRecordedButtonPins();
       Screen::get()->remove_drawable(recordAnimator);
-      updateables.clear();
+      
+      remove_from_vector(updateables, (Updateable *) recordAnimator);
       delete recordAnimator;
+
+      remove_from_vector(updateables, (Updateable *) bPinRecorder);
       delete bPinRecorder;
 
       Serial.println("Starting loopingLEDy!");

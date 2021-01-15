@@ -22,95 +22,75 @@
 #include "Pong.h"
 #include "ButtonPinRecorder.h"
 #include "Constants.h"
-#include "ColorStripeAnimatorPulse.h"
+#include "PinRecordAnimator.h"
 
-enum class GameState { InitPinRecorder, RecordPins, InitPong, PlayPong};
+enum class GameState
+{
+  RecordPins,
+  PlayPong
+};
 
-GameState state = GameState::InitPinRecorder;
+GameState state = GameState::RecordPins;
 
-Pong * pong;
-ButtonPinRecorder * bPinRecorder;
-ColorStripeAnimatorPulse * pulseStripeAnimator;
-CRGB * leds = new CRGB[ Const::NUM_LEDS];
+Pong *pong;
+ButtonPinRecorder *bPinRecorder;
+PinRecordAnimator *recordAnimator;
 
-void setup() {
-  delay( Const::POWERUP_SAFETY_DURATION); // power-up safety delay
+std::vector<Updateable *> updateables;
 
-  // set chipset type, color order of LEDs and number of LEDs on stripe
-  //FastLED.addLeds<led_type, led_color_order>(leds, num_leds);
-  const int clockPin = 13;
-  const int dataPin = 11;
-  FastLED.addLeds<APA102, dataPin, clockPin, BGR>(leds, Const::NUM_LEDS);
-  FastLED.setCorrection( TypicalLEDStrip );
-  FastLED.setTemperature( UncorrectedTemperature);
-  
-  // set global brightness
-  FastLED.setBrightness( Const::BRIGHTNESS );
+void setup()
+{
+  delay(Const::POWERUP_SAFETY_DURATION_MS); // power-up safety delay
 
-  // turn off all LEDs
-  for (uint8_t i = 0; i < Const::NUM_LEDS; i++) {
-    leds[i] = CRGB::Black;
-  }
+  Serial.begin(9600);
+  Serial.println("Start setup of arduino!");
 
-  FastLED.show();
+  Screen::get(); // init screen
 
-  Serial.begin( 9600 );
-  Serial.println("Starting Pong!");
+  recordAnimator = new PinRecordAnimator(Const::playerColors[0]);
+  updateables.push_back(recordAnimator);
+  Screen::get()->add_drawable(recordAnimator, Screen::Layer::Top);
+
+  bPinRecorder = new ButtonPinRecorder(Const::BUTTON_PIN_RECORDING_DURATION);
+  updateables.push_back(bPinRecorder);
+
+  Serial.println("Finished setup of arduino!");
 }
 
-void loop() {
-//  for (int i=2; i<10; ++i) {
-//    Serial.println( "Pin" + String( i) + " " + String( digitalRead( i)));  
-//  }
-//  Serial.println( "");
-//  delay( 1000);
+void loop()
+{
+  if (state == GameState::RecordPins)
+  {
+    uint8_t currentPinNumber = bPinRecorder->getRecordedButtonPins().size();
+    CRGB currentPinColor = Const::playerColors[currentPinNumber];
+    if (currentPinColor != recordAnimator->getPulseColor())
+    {
+      recordAnimator->setPulseColor(currentPinColor);
+    }
 
-  
-  switch (state) {
-    case GameState::InitPinRecorder: {
-      Serial.println("Initializing pin recorder!");
-        bPinRecorder = new ButtonPinRecorder( Const::BUTTON_PIN_RECORDING_DURATION);
-        pulseStripeAnimator = new ColorStripeAnimatorPulse( Const::NUM_LEDS);
-        pulseStripeAnimator->setPulseColor( Const::playerColors[ 0]);
-        pulseStripeAnimator->setPulseDuration( Const::BUTTON_PIN_RECORDING_PULSE_DURATION);
-        state = GameState::RecordPins;
-        break;
-      }
+    if (bPinRecorder->hasFinished())
+    {
+      std::vector<uint8_t> buttonPins = bPinRecorder->getRecordedButtonPins();
+      Screen::get()->remove_drawable(recordAnimator);
+      updateables.clear();
+      delete recordAnimator;
+      delete bPinRecorder;
 
-    case GameState::RecordPins: {
-        pulseStripeAnimator->animateLeds( leds, millis());
-        FastLED.show();
+      Serial.println("Starting loopingLEDy!");
+      pong = new Pong(buttonPins, Const::LIFES, Const::BUTTON_LOCK_TIME_MS, Const::NUM_LEDS, Const::STRIPE_LENGTH);
+      updateables.push_back(pong);
 
-        uint8_t currentPinNumber = bPinRecorder->getNumRecordedButtonPins();
-        CRGB currentPinColor = Const::playerColors[ currentPinNumber];
-        if (currentPinColor != pulseStripeAnimator->getPulseColor()) {
-          pulseStripeAnimator->setPulseColor( currentPinColor);
-        }
-        
-        bool finished = bPinRecorder->loop();
-        if ( finished) {
-          state = GameState::InitPong;
-        }
-        break;
-      }
-
-    case GameState::InitPong: {
-      Serial.println("Initializing Pong!");
-        uint8_t numButtonPins = bPinRecorder->getNumRecordedButtonPins();
-        uint8_t * buttonPins = new uint8_t[ numButtonPins];
-        bPinRecorder->getRecordedButtonPins( buttonPins);
-        delete bPinRecorder;
-        delete pulseStripeAnimator;
-
-        pong = new Pong( buttonPins, numButtonPins, Const::LIFES, Const::BUTTON_LOCK_TIME, leds, Const::NUM_LEDS, Const::STRIPE_LENGTH);
-
-        state = GameState::PlayPong;
-        break;
-      }
-
-    case GameState::PlayPong: {
-        pong->game_logic();
-        break;
-      }
+      state = GameState::PlayPong;
+    }
   }
+
+  unsigned long current_time = millis();
+
+  for (auto updateable : updateables)
+  {
+    updateable->update(current_time);
+  }
+
+  Screen::get()->draw();
+  // delay(1000);
 }

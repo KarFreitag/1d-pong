@@ -21,15 +21,19 @@
 
 #include "helper.h"
 
-Pong::Pong(uint8_t * player_pins, uint8_t num_players, uint8_t lifes, uint16_t button_lock_time,
-           CRGB *leds, uint8_t num_leds, double stripe_length)
-  : num_players( num_players),
+Pong::Pong( std::vector<uint8_t> player_pins, uint8_t lifes, uint16_t button_lock_time, uint8_t num_leds, double stripe_length)
+  : num_players( player_pins.size()),
     num_players_alive( num_players),
-    screen( leds, num_leds),
     ball(0, 0, num_leds - 1, 0.2, 1),
     restart_lock_time( button_lock_time)
 {
   players = createPlayers( num_players, player_pins, lifes, num_leds, button_lock_time);
+
+  for (auto player = players.begin(); player != players.end(); ++player) {
+    Screen::get()->add_drawable(player, Screen::Layer::Players);
+  }
+
+  Screen::get()->add_drawable( &ball, Screen::Layer::Balls);
 
   state = WAITING;
   auto_serve_timeout = 2000;
@@ -38,41 +42,36 @@ Pong::Pong(uint8_t * player_pins, uint8_t num_players, uint8_t lifes, uint16_t b
   randomSeed( millis());
 }
 
-void Pong::game_logic() {
-  if (should_restart_pong()) {
-    //screen.reset( players, num_players);
-    screen.clear(ball);
-    waiting_time = millis();
+void Pong::update(unsigned long runtime)
+{
+ if (should_restart_pong()) {
+    waiting_time = runtime;
     state = WAITING;
   }
 
   switch (state) {
     case WAITING:
-      screen.show_score( players, num_players);
-      if (should_restart_pong() || (isFirstRun && (millis() - waiting_time >= 10000))) {
+      if (should_restart_pong() || (isFirstRun && (runtime - waiting_time >= 10000))) {
         choose_random_player();
 
         for (int i = 0; i < num_players; ++i) {
           players[i].reset_lifes();
         }
-        screen.reset( players, num_players);
         num_players_alive = num_players;
-
         state = SERVE;
       }
-      if (millis() - waiting_time >= 30000) {
+      if (runtime - waiting_time >= 30000) {
         state = IDLE;
       }
       break;
       
     case IDLE:
-      screen.show_color_palette();
+      // TODO: update screen saver
       break;
       
     case PLAYING:
       if (ball.timer()) {
         ball.advance();
-        screen.draw( players, num_players, ball);
       }
 
       if ( players[ active_player].is_position_within_hitbox( ball.get_previous_position())
@@ -82,13 +81,11 @@ void Pong::game_logic() {
           --num_players_alive;
 
           if (num_players_alive <= 1) {
-            screen.reset( players, num_players);
-            waiting_time = millis();
+            waiting_time = runtime;
             state = WAITING;
             break;
           }
         }
-        screen.show_score( players, num_players);
         prepare_next_serve();
         break;
       }

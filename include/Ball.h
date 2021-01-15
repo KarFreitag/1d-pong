@@ -1,24 +1,5 @@
-/*
- * 1D Pong - Pong-like game run on an Arduino MCU
- * Copyright (C) 2018  Stephan Riedel - raidlman@gmail.com
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 
-// Ball.h
-#ifndef BALL_H
-#define BALL_H
+#pragma once
 
 #if defined(ARDUINO) && ARDUINO >= 100
   #include <Arduino.h>
@@ -27,9 +8,13 @@
 #endif
 #include "Player.h"
 
-class Ball {
+#include "Drawable.h"
+
+class Ball: public Drawable {
   public:
     Ball(int8_t position, uint8_t min_position, uint8_t max_position, double speed, int8_t direction);
+
+    void draw(CRGB *leds);
 
     bool is_inside_hitbox(Player &player);
     bool timer();
@@ -44,7 +29,6 @@ class Ball {
 
     void calc_speedup(Player &player);
     void reset_speedup();
-    void serve(Player player);
 
   private:
     int8_t position, previous_position;
@@ -54,12 +38,8 @@ class Ball {
     double speedup;
     int8_t direction;
     unsigned long time;
-
-    uint8_t distance_to_field_boundary (Player &player);
     
     // convert speed (in m/s) to timer delay
     uint16_t speed_to_timer();
     void increase_speed();
 };
-
-#endif

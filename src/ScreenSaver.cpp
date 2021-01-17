@@ -9,7 +9,7 @@ ScreenSaver::ScreenSaver() : animator(Const::NUM_LEDS)
     this->animator.setPulseDuration(10000);
 
     this->lastActionTime = 0;
-    this->activationTime = 10000;
+    this->activationTime = 30000;
 }
 
 ScreenSaver::~ScreenSaver()
@@ -19,6 +19,16 @@ ScreenSaver::~ScreenSaver()
 void ScreenSaver::update(unsigned long runtime)
 {
     this->currentTime = runtime;
+
+    uint8_t numRecordablePins = sizeof(Const::recordableButtonPins);
+    for (uint8_t i = 0; i < numRecordablePins; ++i)
+    {
+        if (digitalRead(Const::recordableButtonPins[i]) == HIGH)
+        {
+            this->lastActionTime = runtime;
+            break;
+        }
+    }
 }
 
 void ScreenSaver::draw(CRGB *leds)

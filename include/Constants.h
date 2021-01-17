@@ -12,6 +12,7 @@ namespace Const
     const uint16_t BUTTON_LOCK_TIME_MS = 500;
     const uint16_t BUTTON_PIN_RECORDING_DURATION = 6000;
     const unsigned long BUTTON_PIN_RECORDING_PULSE_DURATION_MS = 2000;
+    const uint8_t recordableButtonPins[8] = { 2, 3, 4, 5, 6, 7, 8, 9};
 
     // FastLED settings
     const uint8_t NUM_LEDS = 100;

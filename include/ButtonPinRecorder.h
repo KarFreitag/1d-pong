@@ -32,5 +32,4 @@ class ButtonPinRecorder: public Updateable {
     
     std::vector<uint8_t> recordedButtonPins;
     bool finished = false;
-    uint8_t recordableButtonPins[8] = { 2, 3, 4, 5, 6, 7, 8, 9};
 };

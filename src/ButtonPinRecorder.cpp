@@ -16,12 +16,12 @@ ButtonPinRecorder::ButtonPinRecorder(uint16_t recordingDuration, uint8_t numReco
 
 void ButtonPinRecorder::update(unsigned long runtime)
 {
-  uint8_t numRecordablePins = sizeof(recordableButtonPins);
+  uint8_t numRecordablePins = sizeof(Const::recordableButtonPins);
   for (uint8_t i = 0; i < numRecordablePins; ++i)
   {
-    if (digitalRead(recordableButtonPins[i]) == HIGH)
+    if (digitalRead(Const::recordableButtonPins[i]) == HIGH)
     {
-      addPin(recordableButtonPins[i]);
+      addPin(Const::recordableButtonPins[i]);
 
       // reset recording time
       recordingStartTime = runtime;
